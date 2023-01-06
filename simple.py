@@ -14,9 +14,11 @@ print(10*'-')
 
 start_time = perf_counter()
 
-A.dot(B)
-# np.tensordot(A,B,(1,0))
+# A.dot(B)
+np.tensordot(A,B,(1,0))
 
 end_time = perf_counter()
 
 print(f'perf_counter: {end_time- start_time: 0.2f}s')
+
+
