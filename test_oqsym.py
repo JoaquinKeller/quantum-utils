@@ -2,7 +2,11 @@ import numpy as np
 import sys
 import oqsym
 
-import qiskit 
+try:
+    import qiskit 
+    import qiskit.quantum_info as qiskit_quantum_info
+except:
+    pass
 
 def oqsym_run(params):
     nbqubits=params.shape[1]
@@ -31,7 +35,7 @@ def qiskit_run(params):
             qc.cz(nbqubits-1-qubit,nbqubits-1-qubit-1)
     for qubit in range(nbqubits):
         qc.sx(qubit)
-    return qiskit.quantum_info.Statevector.from_instruction(qc).probabilities()
+    return qiskit_quantum_info.Statevector.from_instruction(qc).probabilities()
 
 
 if __name__=='__main__':

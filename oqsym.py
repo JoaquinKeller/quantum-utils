@@ -22,6 +22,7 @@ class QuantumRegister:
     
     def measureAll(self):
         self.qstate = np.abs(self.qstate)**2
+        # self.qstate = np.square(np.abs(self.qstate))
         return self.qstate.ravel()
     
     def rz(self,q:int,t:float):
