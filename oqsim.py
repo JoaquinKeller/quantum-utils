@@ -25,8 +25,8 @@ class QuantumRegister:
         # self.qstate = np.square(np.abs(self.qstate))
         return self.qstate.ravel()
     
-    def rz(self,q:int,t:float):
-        self.oneQubitGate(RZgate(t),q)
+    def rz(self,q:int,theta:float):
+        self.oneQubitGate(RZgate(theta),q)
     
     def sx(self,q:int):
         self.oneQubitGate(SXgate,q)
