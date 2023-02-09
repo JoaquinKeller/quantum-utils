@@ -1,7 +1,8 @@
+import sys
 import numpy as np
 from time import perf_counter
 
-import sys
+from circuit import pcircuit_run
 
 depth = nbcircuits= 1
 
@@ -18,18 +19,22 @@ except:
     print(f"example: python {sys.argv[0]} qiskit 14")   
     sys.exit(0) 
 
-if simulator == "qiskit": from circuit_qiskit import pcircuit_run
-elif simulator == "oqsim": from circuit_oqsim import pcircuit_run
+if simulator == "qiskit": from qiskitsim import QuantumRegister
+elif simulator == "oqsim": from oqsim import QuantumRegister
 else:
-    print(f"Simulator {simulator} not available")
+    print(f"Simulator '{simulator}' not available. Available simulators: 'qiskit' 'oqsim')")
     sys.exit(0)
+    
+def run_pcircuit(params):
+    pcircuit_run(params,QR=QuantumRegister) #type:ignore
+
 
 print(f"nbqubits:{nbqubits} - depth:{depth} - nbcircuits:{nbcircuits}")
 
 before = perf_counter()
 for _ in range(nbcircuits):
     params= np.random.rand(depth,nbqubits)
-    pcircuit_run(params)
+    run_pcircuit(params) 
 totaltime=perf_counter()-before
 print(f"total time:{totaltime}s")
 if nbcircuits>1: print(f"time per circuit:{totaltime/nbcircuits}s")

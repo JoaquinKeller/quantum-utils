@@ -5,8 +5,8 @@ on random circuits of several sizes
 """
 
 import numpy as np
-import circuit_qiskit, circuit_oqsim
-
+import circuit
+import oqsim,qiskitsim
 
 
 if __name__=='__main__':
@@ -18,7 +18,8 @@ if __name__=='__main__':
             print("depth=",depth,end='')
             for _ in range(10):
                 params= np.random.rand(depth,nbqubits)
-                assert np.allclose( circuit_qiskit.pcircuit_run(params), circuit_oqsim.pcircuit_run(params))
+                assert np.allclose(circuit.pcircuit_run(params,QR=oqsim.QuantumRegister), #type:ignore  
+                                   circuit.pcircuit_run(params, QR=qiskitsim.QuantumRegister)) #type:ignore              
                 nb_circuits+=1
                 print('.',end='')
             print()

@@ -1,9 +1,13 @@
 import oqsim
+from abstractQregister import AbstractQuantumRegister
 
-def pcircuit_run(params):
+
+def pcircuit_run(params,QR=oqsim.QuantumRegister):
+    assert params.ndim==2
     nbqubits=params.shape[1]
+    batchsize=1
     
-    qc=oqsim.QuantumRegister(nbqubits)
+    qc=QR(nbqubits,batchsize)
     for step in params:
         for qubit,v in enumerate(step):
             qc.sx(qubit)
