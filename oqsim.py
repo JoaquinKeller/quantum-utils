@@ -1,10 +1,13 @@
 import numpy as np
 from abstractQregister import AbstractQuantumRegister
 class QuantumRegister(AbstractQuantumRegister):
+    batchcapable = False
     def __init__(self,nbqubit:int, batchsize:int=1) -> None:
         self.nbqubit = nbqubit
         self.qstate = np.zeros((2,)*nbqubit, dtype=np.csingle)
         self.qstate[(0,)*nbqubit] = 1
+        
+
     
     def _oneQubitGate(self, matrix,q:int):
         assert q<self.nbqubit

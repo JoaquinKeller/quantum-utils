@@ -1,14 +1,17 @@
 import numpy as np
 import numexpr as ne
+from abstractQregister import AbstractQuantumRegister
 
-self=dict()
-class QuantumRegister:
+# self=dict()
+class QuantumRegister(AbstractQuantumRegister):
+    batchcapable = True
     def __init__(self, nbqubit:int, batchsize:int=1) -> None:
         self.nbqubit = nbqubit
         self.batchsize=batchsize
         self.inQ = np.zeros((2**nbqubit, batchsize), dtype=np.csingle)  # quantum state, input buffer 
         self.outQ = np.empty_like(self.inQ)
         self.reset()
+
     
     def reset(self):
         self.inQ.fill(0)
@@ -16,7 +19,7 @@ class QuantumRegister:
         
     def rz(self, q:int, theta):
         assert q<self.nbqubit
-        assert theta.shape == (self.batchsize,)
+        assert self.batchsize==1 or theta.shape == (self.batchsize,)
         # t2 = theta/2
         t2 = ne.evaluate('theta/2')
         cost = ne.evaluate('cos(t2)')
@@ -134,7 +137,20 @@ class QuantumRegister:
         self.inQ.shape = (-1, self.batchsize)
         
     def measureAll(self):
-        return np.abs(self.inQ)**2
+        result = np.abs(self.inQ)**2
+        if self.batchsize: return result[:,0]
+        return result
 
 SXgate = np.array([[1+1j, 1-1j], [1-1j, 1+1j]], dtype=np.csingle)/2
+
+if __name__=='__main__':
+    # basic test
+    qr = QuantumRegister(2)
+    qr.sx(0)
+    print(qr.measureAll())
+    import oqsim
+    qr = oqsim.QuantumRegister(2)
+    qr.sx(0)
+    print(qr.measureAll())
+    
 

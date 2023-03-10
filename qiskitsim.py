@@ -6,6 +6,7 @@ class QuantumRegister(AbstractQuantumRegister):
     def __init__(self,nbqubit:int, batchsize:int=1) -> None:
         self.nbqubit = nbqubit
         self.qc=qiskit.QuantumCircuit(nbqubit)
+        self.batchcapable = False
     
     def rz(self,q:int,theta:float):
         self.qc.rz(theta,self.nbqubit-1-q)

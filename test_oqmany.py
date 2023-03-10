@@ -1,12 +1,12 @@
 """
-check the output of oqsim 
+check the output of oqmany 
 against the reference (qiskit) 
 on random circuits of several sizes
 """
 
 import numpy as np
 import circuit
-import oqsim,qiskitsim
+import oqmany,qiskitsim
 
 
 if __name__=='__main__':
@@ -17,8 +17,8 @@ if __name__=='__main__':
         for depth in range(1,6,1):
             print("depth=",depth,end='')
             for _ in range(10):
-                params= np.pi* np.random.rand(depth,nbqubits)
-                assert np.allclose(circuit.pcircuit_run(params,QR=oqsim.QuantumRegister), #type:ignore  
+                params= np.random.rand(depth,nbqubits)
+                assert np.allclose(circuit.pcircuit_run(params,QR=oqmany.QuantumRegister), #type:ignore  
                                    circuit.pcircuit_run(params, QR=qiskitsim.QuantumRegister)) #type:ignore              
                 nb_circuits+=1
                 print('.',end='')
