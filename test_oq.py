@@ -30,7 +30,15 @@ def test_oq(QR, batchsize=None):
     print('Tested:',QR.__module__)
     print(f"{nb_circuits} circuits tested with success")     
     
-    
+  
+
+
 if __name__=='__main__':
-    test_oq()    
+    import oqsim, oqmany
+    test_oq(oqsim.QuantumRegister)     
+    print(40*"_")       
+    test_oq(oqmany.QuantumRegister)            
+    print(40*"_")    
+    print("\noqsim and oqmany: successfully tested\n")   
+    
             
