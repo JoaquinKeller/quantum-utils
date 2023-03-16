@@ -26,18 +26,26 @@ def batch_run(params, circuit_run=pcircuit_run, QR=oqmany.QuantumRegister):
         batchsize=params.shape[2]
         if batchsize==1: params=params[:,:,0]
     if batchsize>1 and not QR.batchcapable:
-        batchresult = np.zeros(batchsize,dtype=float)
+        batchresult = list()
         for i in range(batchsize):
-            batchresult[i]=circuit_run(params[:,:,i], QR=QR) #type:ignore
-        return batchresult
+            batchresult.append(circuit_run(params[:,:,i], QR=QR)) #type:ignore
+        return np.stack(batchresult,axis=1)
     return circuit_run(params, QR=QR, batchsize=batchsize) #type:ignore
     
 
 if __name__=='__main__':
+    # below: pieces of code for debugging purposes
     import numpy as np
-    depth, nbqubits, batchsize = 3,7,1
+    import qiskitsim
+    
+    depth, nbqubits, batchsize = 3,2,3
     params = np.pi * np.random.rand(depth, nbqubits, batchsize)
     # pcircuit_run(params, QR=oqsim.QuantumRegister)  #type:ignore  
-    params= np.random.rand(depth,nbqubits)
+    # params= np.random.rand(depth,nbqubits)
                 # assert np.allclose(circuit.pcircuit_run(params,QR=oqmany.QuantumRegister),
-    pcircuit_run(params, QR=oqmany.QuantumRegister, batchsize=batchsize)  #type:ignore  
+    result = batch_run(params, QR=oqmany.QuantumRegister)  #type:ignore  
+    print( result)
+    print("oqmany:",type(result))
+    result = batch_run(params, QR=qiskitsim.QuantumRegister)  #type:ignore  
+    print(result)
+    print("qiskitsim:",type(result))

@@ -3,6 +3,7 @@ import qiskit.quantum_info as qiskit_quantum_info
 from abstractQregister import AbstractQuantumRegister
 
 class QuantumRegister(AbstractQuantumRegister):
+    batchcapable = False
     def __init__(self,nbqubit:int, batchsize:int=1) -> None:
         self.nbqubit = nbqubit
         self.qc=qiskit.QuantumCircuit(nbqubit)

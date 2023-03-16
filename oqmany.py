@@ -138,19 +138,19 @@ class QuantumRegister(AbstractQuantumRegister):
         
     def measureAll(self):
         result = np.abs(self.inQ)**2
-        if self.batchsize: return result[:,0]
+        if self.batchsize==1: return result[:,0]
         return result
 
 SXgate = np.array([[1+1j, 1-1j], [1-1j, 1+1j]], dtype=np.csingle)/2
 
 if __name__=='__main__':
     # basic test
-    qr = QuantumRegister(2)
+    qr = QuantumRegister(2,2)
     qr.sx(0)
     print(qr.measureAll())
-    import oqsim
-    qr = oqsim.QuantumRegister(2)
-    qr.sx(0)
-    print(qr.measureAll())
+    # import oqsim
+    # qr = oqsim.QuantumRegister(2)
+    # qr.sx(0)
+    # print(qr.measureAll())
     
 
