@@ -5,17 +5,28 @@ from abstractQregister import AbstractQuantumRegister
 # self=dict()
 class QuantumRegister(AbstractQuantumRegister):
     batchcapable = True
+    @staticmethod
+    def makeShotsFromProba(proba:np.ndarray, nbshots:int):
+        if proba.ndim ==2:
+            return np.random.multinomial(nbshots, proba) #type:ignore
+        else:
+            def fun(v): return np.random.multinomial(nbshots, v)
+            return np.apply_along_axis(fun, 0, proba) #type:ignore
+ 
+    
     def __init__(self, nbqubit:int, batchsize:int=1) -> None:
         self.nbqubit = nbqubit
         self.batchsize=batchsize
         self.inQ = np.zeros((2**nbqubit, batchsize), dtype=np.csingle)  # quantum state, input buffer 
         self.outQ = np.empty_like(self.inQ)
+        self.proba = None
         self.reset()
 
     
     def reset(self):
         self.inQ.fill(0)
         self.inQ[0].fill(1)
+        self.proba = None
         
     def rz(self, q:int, theta):
         assert q<self.nbqubit
@@ -137,10 +148,14 @@ class QuantumRegister(AbstractQuantumRegister):
         self.inQ.shape = (-1, self.batchsize)
         
     def measureAll(self):
-        result = np.abs(self.inQ)**2
-        if self.batchsize==1: return result[:,0]
-        return result
+        self.proba = np.abs(self.inQ)**2
+        if self.batchsize==1: self.proba = self.proba[:,0]
+        return self.proba
 
+    def makeShots(self,nbshots):
+        if self.proba is None: self.measureAll()
+        return __class__.makeShotsFromProba(self.proba, nbshots) #type:ignore 
+    
 SXgate = np.array([[1+1j, 1-1j], [1-1j, 1+1j]], dtype=np.csingle)/2
 
 if __name__=='__main__':

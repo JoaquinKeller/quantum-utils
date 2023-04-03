@@ -19,6 +19,10 @@ class QuantumRegister(AbstractQuantumRegister):
         self.qc.cz(self.nbqubit-1-q0,self.nbqubit-1-q1)
         
     def measureAll(self):
-        return qiskit_quantum_info.Statevector.from_instruction(self.qc).probabilities()
+        self.mstate = qiskit_quantum_info.Statevector.from_instruction(self.qc).probabilities()
+        return self.mstate
     
-        
+    def makeShots(self,nbshots):
+        return np.random.multinomial(nbshots, self.mstate) #type:ignore
+    
+        return qiskit_quantum_info.Statevector.from_instruction(self.qc).sample_memory(nbshots)

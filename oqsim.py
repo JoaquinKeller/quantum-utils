@@ -2,12 +2,16 @@ import numpy as np
 from abstractQregister import AbstractQuantumRegister
 class QuantumRegister(AbstractQuantumRegister):
     batchcapable = False
+    @staticmethod
+    def makeShotsFromProba(proba, nbshots):
+        return np.random.multinomial(nbshots, proba)
+        
     def __init__(self,nbqubit:int, batchsize:int=1) -> None:
+        #! todo batchsize not used
         self.nbqubit = nbqubit
         self.qstate = np.zeros((2,)*nbqubit, dtype=np.csingle)
         self.qstate[(0,)*nbqubit] = 1
-        
-
+        self.proba=None
     
     def _oneQubitGate(self, matrix,q:int):
         assert q<self.nbqubit
@@ -21,9 +25,14 @@ class QuantumRegister(AbstractQuantumRegister):
         self.qstate=np.moveaxis(self.qstate,(0,1),(q0,q1))
 
     def measureAll(self):
-        self.qstate = np.abs(self.qstate)**2
+        self.proba = np.abs(self.qstate)**2
+        self.proba = self.proba.ravel()
         # self.qstate = np.square(np.abs(self.qstate))
-        return self.qstate.ravel()
+        return self.proba
+    
+    def makeShots(self,nbshots):
+        if self.proba is None: self.measureAll()
+        return __class__.makeShotsFromProba(self.proba,nbshots)
     
     def rz(self,q:int,theta:float):
         self._oneQubitGate(RZgate(theta),q)
@@ -36,8 +45,7 @@ class QuantumRegister(AbstractQuantumRegister):
         
     def viewQuantumState(self):
         return self.qstate.ravel()
-    
-    
+
         
 def RZgate(t:float):
     return np.array([
@@ -57,3 +65,9 @@ CNOT_tensor = np.reshape(CNOT_matrix, (2, 2, 2, 2))
 CZ_matrix = np.diag([1,1,1,-1])
 CZ_tensor = np.reshape(CZ_matrix, (2, 2, 2, 2))
 
+if __name__=='__main__':
+    # basic test
+    qr = QuantumRegister(2,3)
+    qr.sx(0)
+    print(qr.measureAll())
+    print(qr.makeShots(100))
