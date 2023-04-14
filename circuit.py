@@ -7,7 +7,7 @@ def pcircuit_run(params,QR=oqsim.QuantumRegister, batchsize=1):
     assert (params.ndim==2 and batchsize==1) or (batchsize>1 and QR.batchcapable and params.ndim==3) 
     nbqubits=params.shape[1]
     
-    qc=QR(nbqubits,batchsize)
+    qc=QR(nbqubits,batchsize) #type:ignore
     for step in params:
         for qubit,theta in enumerate(step):
             qc.sx(qubit)

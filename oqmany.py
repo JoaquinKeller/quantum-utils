@@ -59,7 +59,7 @@ class QuantumRegister(AbstractQuantumRegister):
         assert self.batchsize==1 or np.isscalar(theta)
         # t2 = theta/2
 
-        t2 = theta/2
+        t2 = theta/2 #type:ignore
         cost = np.cos(t2)
         isint = 1j*np.sin(t2)
         gate00 = cost - isint
