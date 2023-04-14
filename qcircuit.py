@@ -39,7 +39,7 @@ class Qcircuit:
         {len(xparams)+ len(lparams)} parameters provided vs {self.nbparams} needed"""
 
         batchsize = xparams.shape[-1]
-        print(f"batchsize:{batchsize}")
+        # print(f"batchsize:{batchsize}")
         qr = QR(self.highestqubit+1, batchsize)
 
         lparams_index = 0
@@ -63,11 +63,11 @@ class Qcircuit:
                     else:
                         assert type(param_id) == int, f"{param_id}"
                         run_args.append(xparams[param_id])
-            print(f" tok:{tok}\n run_args:{run_args}")
+            # print(f" tok:{tok}\n run_args:{run_args}")
             run_gate(*run_args)
 
     def _print(self):
-        print(f"  nbqubits={1+self.highestqubit}  nbparams={self.nbparams}")
+        # print(f"  nbqubits={1+self.highestqubit}  nbparams={self.nbparams}")
         print(self.parsed)
 
 
