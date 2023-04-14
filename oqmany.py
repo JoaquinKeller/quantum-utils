@@ -30,7 +30,12 @@ class QuantumRegister(AbstractQuantumRegister):
         
     def rz(self, q:int, theta):
         assert q<self.nbqubit
-        assert self.batchsize==1 or theta.shape == (self.batchsize,)
+        assert self.batchsize==1 or theta.shape == (self.batchsize,) or np.isscalar(theta)
+
+        if np.isscalar(theta): # à tester
+            self.rzscalar(q, theta)
+            return
+
         # t2 = theta/2
         t2 = ne.evaluate('theta/2')
         cost = ne.evaluate('cos(t2)')
@@ -44,6 +49,29 @@ class QuantumRegister(AbstractQuantumRegister):
         q1 = self.inQ[:, 1, :]
         self.outQ[:, 0, :] = ne.evaluate('gate00 * q0')
         self.outQ[:, 1, :] = ne.evaluate('gate11 * q1')
+
+        self.inQ.shape = (-1, self.batchsize)
+        self.outQ.shape = (-1, self.batchsize)
+        self.inQ, self.outQ = self.outQ, self.inQ
+
+    def rzscalar(self, q:int, theta):
+        assert q<self.nbqubit
+        assert self.batchsize==1 or np.isscalar(theta)
+        # t2 = theta/2
+
+        t2 = theta/2
+        cost = np.cos(t2)
+        isint = 1j*np.sin(t2)
+        gate00 = cost - isint
+        gate11 = cost + isint
+
+        shape = (2**q, 2, -1, self.batchsize)
+        self.inQ.shape = shape
+        self.outQ.shape = shape
+        q0 = self.inQ[:, 0, :]
+        q1 = self.inQ[:, 1, :]
+        self.outQ[:, 0, :] = gate00 * q0
+        self.outQ[:, 1, :] = gate11 * q1
 
         self.inQ.shape = (-1, self.batchsize)
         self.outQ.shape = (-1, self.batchsize)
