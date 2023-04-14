@@ -65,6 +65,7 @@ class Qcircuit:
                         run_args.append(xparams[param_id])
             # print(f" tok:{tok}\n run_args:{run_args}")
             run_gate(*run_args)
+        return qr.measureAll()
 
     def _print(self):
         # print(f"  nbqubits={1+self.highestqubit}  nbparams={self.nbparams}")
