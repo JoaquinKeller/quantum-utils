@@ -72,23 +72,24 @@ class Qcircuit:
         print(self.parsed)
 
 
-if __name__ == '__main__':
-    import numpy as np
+# if __name__ == '__main__':
+#     import numpy as np
 
-    print(Qcircuit("sx(1)rz(2,t)cz(0,1)").parsed)
+#     print(Qcircuit("sx(1)rz(2,t)cz(0,1)").parsed)
 
-    A2q2t = '''
-    sx(0)rz(0,t)sx(0)
-    sx(1)rz(1,t)sx(1)
-    '''
-    A2q8t = 3*(A2q2t+' cz(0,1)')+A2q2t
-    # print(A2q8t)
-    qcA2q8t = Qcircuit(A2q8t)
+#     A2q2t = '''
+#     sx(0)rz(0,t)sx(0)
+#     sx(1)rz(1,t)sx(1)
+#     '''
+#     A2q8t = 3*(A2q2t+' cz(0,1)')+A2q2t
+#     # print(A2q8t)
+#     qcA2q8t = Qcircuit(A2q8t)
 
-    qcA2q2t = Qcircuit(A2q2t+"cz(0,1)")
-    qcA2q2t._print()
-    permutation = [0, -1]
-    xparams = np.random.rand(1, 4)
-    print(xparams[0].shape)
-    lparams = np.random.rand(1)
-    qcA2q2t.run_permutation(permutation, xparams, lparams)
+#     qcA2q2t = Qcircuit(A2q2t+"cz(0,1)")
+#     qcA2q2t._print()
+#     permutation = [0, -1]
+#     xparams = np.random.rand(1, 4)
+#     # print(xparams[0].shape)
+#     lparams = np.random.rand(1)
+#     # print(lparams.shape)
+#     qcA2q2t.run_permutation(permutation, xparams, lparams)
