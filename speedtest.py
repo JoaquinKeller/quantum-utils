@@ -30,7 +30,7 @@ if __name__=='__main__':
         try:nbcircuits=int(sys.argv[4])
         except:pass
     except:
-        print(f"usage: python {sys.argv[0]} (qiskit|oqsim) nbqubits [depth [nbcircuits]]")   
+        print(f"usage: python {sys.argv[0]} (qiskit|oqsim|oqmany) nbqubits [depth [nbcircuits]]")   
         print(f"example: python {sys.argv[0]} oqsim 14 1 1000")   
         print(f"example: python {sys.argv[0]} qiskit 14")   
         sys.exit(0) 
@@ -44,5 +44,7 @@ if __name__=='__main__':
     totaltime = speedtest(simulator, nbqubits, depth,nbcircuits)
     
     print(f"total time:{totaltime:.2f}s")
-    print(f"time per circuit:{totaltime/nbcircuits:.2f}s\nin milliseconds {1000*totaltime/nbcircuits:.2f}ms ")
+    print(f"time per circuit:{totaltime/nbcircuits:.2f}s")
+    print(f"in milliseconds {1000*totaltime/nbcircuits:.2f}ms ")
+    print(f"in microseconds {1000000*totaltime/nbcircuits:.2f}μs ")
         
