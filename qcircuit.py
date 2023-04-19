@@ -2,7 +2,7 @@ import oqmany
 
 
 class Qcircuit:
-    valid_tokens = {'sx', 'cz', 'rz'}
+    valid_tokens = {'sx', 'cz', 'rz','r'}
 
     def __init__(self, s: str) -> None:
         self.code = s

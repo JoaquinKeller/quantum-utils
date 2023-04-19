@@ -28,6 +28,11 @@ class QuantumRegister(AbstractQuantumRegister):
         self.inQ[0].fill(1)
         self.proba = None
         
+    def r(self, q:int, theta):
+        self.sx(q)
+        self.rz(q,theta)
+        self.sx(q)
+        
     def rz(self, q:int, theta):
         assert q<self.nbqubit
         assert self.batchsize==1 or theta.shape == (self.batchsize,) or np.isscalar(theta)
