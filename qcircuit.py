@@ -3,6 +3,7 @@ import oqmany
 
 class Qcircuit:
     valid_tokens = {'sx', 'cz', 'rz','r'}
+    entangling_tokens = {'cz'}
 
     def __init__(self, s: str) -> None:
         self.code = s
@@ -29,6 +30,24 @@ class Qcircuit:
                     self.highestqubit = max(self.highestqubit, qubit)
             parsed.append([tok, args])
         return parsed
+    
+    def checktopology(self,topology):
+        for gate in self.parsed:
+            tok = gate[0]
+            if tok not in self.__class__.entangling_tokens: continue
+            assert tok in self.__class__.valid_tokens, f"{tok} not a valid token"
+            q = [0,1]
+            args = gate[1]
+            q_index = 0
+            for arg in args:
+                if type(arg) == int:
+                    q[q_index]=arg
+                    q_index+=1
+            if q[0]>q[1]: q[0],q[1]=q[1],q[0]          
+            if tuple(q) not in topology: return False  
+        return True
+        
+        
 
     def run_permutation(self, permutation, xparams, lparams, QR=oqmany.QuantumRegister):
         assert len(permutation) == self.nbparams, f"""
@@ -47,6 +66,7 @@ class Qcircuit:
 
         for gate in self.parsed:
             tok = gate[0]
+            print(tok)
             assert tok in self.__class__.valid_tokens, f"{tok} not a valid token"
             args = gate[1]
             run_gate = getattr(qr, tok)
@@ -70,21 +90,47 @@ class Qcircuit:
     def _print(self):
         print(f"  nbqubits={1+self.highestqubit}  nbparams={self.nbparams}")
         print(self.parsed)
+        # print([g[0] for g in self.parsed])
 
-
+    FALCON_TOPOLOGY={(0,1),(1,2),(1,3),(3,5),(4,5),(5,6)}
+    
+    Afalcon120tBlockA="r(0,t)r(1,t)r(2,t)r(3,t)r(4,t)r(5,t)r(6,t)"
+    Afalcon120tBlockB="""
+    cz(0,1)cz(3,5)
+    r(0,t)r(1,t)r(3,t)r(5,t)
+    r(0,t)r(1,t)r(3,t)r(5,t)
+    cz(1,2)cz(4,5)
+    r(1,t)r(2,t)r(4,t)r(5,t)
+    r(1,t)r(2,t)r(4,t)r(5,t)
+    cz(1,3)cz(5,6)
+    r(1,t)r(3,t)r(5,t)r(6,t)
+    r(1,t)r(3,t)r(5,t)r(6,t)    
+    """
+    Afalcon120t=Afalcon120tBlockA+4*Afalcon120tBlockB+"""
+    cz(0,1)cz(3,5)
+    r(0,t)r(1,t)r(3,t)r(5,t)
+    r(0,t)r(1,t)r(5,t)
+    cz(1,2)cz(4,5)
+    r(1,t)r(2,t)r(4,t)r(5,t)
+    r(2,t)r(4,t)
+    cz(1,3)cz(5,6)
+    r(1,t)r(3,t)r(5,t)r(6,t)
+    """
 if __name__ == '__main__':
     import numpy as np
 
 
     A2q2t = '''
-    sx(0)rz(0,t)sx(0)
-    sx(1)rz(1,t)sx(1)
+    r(0,t)r(1,t)
     '''
 
 
-    qcA2q2t = Qcircuit(A2q2t+"cz(0,1)")
-    qcA2q2t._print()
-    permutation = [0, -1]
-    xparams = np.random.rand(1, 4)
-    lparams = np.random.rand(1)
-    qcA2q2t.run_permutation(permutation, xparams, lparams)
+    qcA2q2t = Qcircuit(A2q2t+"cz(1,0)")
+    qcAfalcon120t = Qcircuit(Qcircuit.Afalcon120t)
+    print("toppology ok:",qcAfalcon120t.checktopology(Qcircuit.FALCON_TOPOLOGY))
+    qcAfalcon120t._print()
+    permutation = list(range(120))
+    xparams = np.random.rand(120, 4)
+    lparams = np.random.rand(0)
+    qcAfalcon120t.run_permutation(permutation, xparams, lparams)
+    
