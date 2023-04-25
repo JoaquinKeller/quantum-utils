@@ -47,8 +47,6 @@ class Qcircuit:
             if tuple(q) not in topology: return False  
         return True
         
-        
-
     def run_permutation(self, permutation, xparams, lparams, QR=oqmany.QuantumRegister):
         assert len(permutation) == self.nbparams, f"""
         The length of permutation={len(permutation)} does not match 
@@ -91,6 +89,9 @@ class Qcircuit:
         print(f"  nbqubits={1+self.highestqubit}  nbparams={self.nbparams}")
         print(self.parsed)
         # print([g[0] for g in self.parsed])
+
+    def _test_permutation_batch(self):
+        pass
 
     FALCON_TOPOLOGY={(0,1),(1,2),(1,3),(3,5),(4,5),(5,6)}
     
