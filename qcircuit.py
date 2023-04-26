@@ -64,7 +64,7 @@ class Qcircuit:
 
         for gate in self.parsed:
             tok = gate[0]
-            print(tok)
+            # print(tok)
             assert tok in self.__class__.valid_tokens, f"{tok} not a valid token"
             args = gate[1]
             run_gate = getattr(qr, tok)
