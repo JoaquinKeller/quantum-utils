@@ -117,6 +117,18 @@ class Qcircuit:
     cz(1,3)cz(5,6)
     r(1,t)r(3,t)r(5,t)r(6,t)
     """
+    
+    Bfalcon120t=Afalcon120tBlockA+4*Afalcon120tBlockB+"""
+    cz(0,1)cz(3,5)
+    r(0,t)r(1,t)r(3,t)r(5,t)
+    r(1,t)r(3,t)r(5,t)
+    cz(1,2)cz(4,5)
+    r(1,t)r(2,t)r(4,t)r(5,t)
+    r(1,t)r(5,t)
+    cz(1,3)cz(5,6)
+    r(1,t)r(3,t)r(5,t)r(6,t)
+    """
+    
 if __name__ == '__main__':
     import numpy as np
 
