@@ -26,3 +26,11 @@ class QuantumRegister(AbstractQuantumRegister):
         return np.random.multinomial(nbshots, self.mstate) #type:ignore
     
         return qiskit_quantum_info.Statevector.from_instruction(self.qc).sample_memory(nbshots)
+    
+    
+    #***************************************************
+    #* to install qiskit with conda forge:
+    #* conda create -n qiskit pip-tools ply  mpmath  charset-normalizer  websockets  websocket-client  urllib3  sympy  symengine  six  pycparser  psutil  pbr  numpy  ntlm-auth  idna  dill  stevedore  scipy  rustworkx  requests  python-dateutil  cffi  cryptography symengine
+    #* conda activate qiskit
+    #* pip install -U qiskit
+    #***************************************************
