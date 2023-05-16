@@ -47,7 +47,7 @@ class Qcircuit:
             if tuple(q) not in topology: return False  
         return True
         
-    def run_permutation(self, permutation, xparams, lparams, QR=oqmany.QuantumRegister):
+    def run_permutation(self, permutation, xparams, lparams, QR=oqmany.QuantumRegister, nbshots=0):
         assert len(permutation) == self.nbparams, f"""
         The length of permutation={len(permutation)} does not match 
         the nb of parameters={self.nbparams} of the circuit"""
@@ -83,7 +83,9 @@ class Qcircuit:
                         run_args.append(xparams[param_id])
             # print(f" tok:{tok}\n run_args:{run_args}")
             run_gate(*run_args)
-        return qr.measureAll()
+        
+        if nbshots ==0: return qr.measureAll()
+        else: return qr.makeShots(nbshots)/nbshots
 
     def _print(self):
         print(f"  nbqubits={1+self.highestqubit}  nbparams={self.nbparams}")
