@@ -63,10 +63,8 @@ class LatexQcircuit(Qcircuit):
         super().__init__(s)
         # print(self.nbparams)
         nbqubits = self.highestqubit+1
-        self.visualcircuit= [[] for _ in range(nbqubits)]
-        self.latexqubits = ["" for _ in range(nbqubits)]
         
-    def appendgate(self,gate:list, param_id:int=-1)->None:
+    def appendgate(self,gate:list, param_id:int=-1, lparam_id:int=-1)->None:
         # print(param_id)
         tok=gate[0]
         q0 = gate[1][0]
@@ -80,7 +78,7 @@ class LatexQcircuit(Qcircuit):
                 else: self.visualcircuit[q].append([])
         else:
             for q in range(len(self.visualcircuit)):
-                if q==q0: self.visualcircuit[q].append([gate[0],gate[1][1:],param_id])
+                if q==q0: self.visualcircuit[q].append([gate[0],gate[1][1:],param_id,lparam_id])
                 else:  self.visualcircuit[q].append([])
     
     def compact(self, n=9999):
@@ -141,33 +139,39 @@ class LatexQcircuit(Qcircuit):
                 
     
     def genlatex(self, permutation:list=[], dim:int=0)-> str:
+        nbqubits = self.highestqubit+1
+        self.visualcircuit= [[] for _ in range(nbqubits)]
+        self.latexqubits = ["" for _ in range(nbqubits)]
         if not permutation:
             permutation=self.nbparams*[-1]
-        # print(permutation)
+        assert len(permutation) == self.nbparams, "permutation lenght is wrong"
+        print(len(permutation))
         
         permutation_index=0
+        lparam_id=-1
         for gate in self.parsed:
             param_id=-1
             if gate[0]=='r': 
                 param_id= permutation[permutation_index]
-                permutation_index += 1            
-            self.appendgate(gate, param_id=param_id)
+                permutation_index += 1
+                if param_id==-1: lparam_id+=1
+            self.appendgate(gate, param_id=param_id, lparam_id=lparam_id)
         self.compact()
         self.__printvisualcircuit()
         permutation_index=0
-        lparams_index=0
         for q in range(len(self.visualcircuit)):
             for gate in self.visualcircuit[q]:
                 if gate == [] or gate[0]=="":
                     self.latexqubits[q]+=r"&\qw"
                 elif gate[0] == 'r':
+                    print("permutation_index",permutation_index)
                     param_id = permutation[permutation_index]
                     param_id = gate[2]
                     # print('param_id:',param_id)
                     permutation_index += 1
                     if param_id == -1:
-                        self.latexqubits[q]+=r"&\gate{"+lparam2latex(lparams_index)+'}'
-                        lparams_index += 1
+                        lparam_id = gate[3]
+                        self.latexqubits[q]+=r"&\gate{"+lparam2latex(lparam_id)+'}'
                     else:
                         assert type(param_id) == int, f"{param_id}"
                         self.latexqubits[q]+=r"&\gate{"+xparam2latex(param_id,dim=dim)+'}'
@@ -208,13 +212,24 @@ def latex2pdf(name='test.tex',texdir='tex/'):
     os.chdir(wd)
     
 if __name__=="__main__":
-    lq = LatexQcircuit("r(0,t)r(1,t)cz(0,1)r(1,t)r(2,t)cz(1,2)r(0,t)r(1,t)r(1,t)r(2,t)cz(0,3)r(0,t)cz(0,2)")
+    # lq = LatexQcircuit("r(0,t)r(1,t)cz(0,1)r(1,t)r(2,t)cz(1,2)r(0,t)r(1,t)r(1,t)r(2,t)cz(0,3)r(0,t)cz(0,2)")
+    lq = LatexQcircuit("""r(0,t)r(1,t)r(2,t)r(3,t)
+r(4,t)r(5,t)r(6,t)
+cz(1,2)cz(4,5)
+    r(1,t)r(2,t)r(4,t)r(5,t)
+    cz(0,1)cz(3,5)
+    r(0,t)r(1,t)r(3,t)r(5,t)
+    cz(1,3)cz(5,6)
+    r(1,t)r(3,t)r(5,t)r(6,t)"""
+        
+    )
     # lq = LatexQcircuit(Qcircuit.Bfalcon120t)  
     # latexdocument = lq.genlatex(permutation=list(range(lq.nbparams)), dim=4)
-    latexdocument = lq.genlatex(dim=1)
+    latexdocument = lq.genlatex(permutation=[-1, 8, 9, -1, 3, 4, 10, 5, 1, -1, 6, -1, 0, -1,  -1, 7, -1, 11, 2], dim=12)
+    # latexdocument = lq.genlatex(dim=4)
     # for qline in lq.visualcircuit: print(qline)
     # for s in lq.latexqubits: print(s)
     with open('tex/test.tex','w') as f: f.write(latexdocument)
 
-    # latex2pdf()
+    # latex2pdf() 
         

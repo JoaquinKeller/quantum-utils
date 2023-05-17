@@ -3,7 +3,7 @@ from abstractQregister import AbstractQuantumRegister
 class QuantumRegister(AbstractQuantumRegister):
     batchcapable = False
     @staticmethod
-    def makeShotsFromProba(proba, nbshots):
+    def makeShotsFromProba(proba, nbshots:int):
         return np.random.multinomial(nbshots, proba)
         
     def __init__(self,nbqubit:int, batchsize:int=1) -> None:
@@ -30,7 +30,7 @@ class QuantumRegister(AbstractQuantumRegister):
         # self.qstate = np.square(np.abs(self.qstate))
         return self.proba
     
-    def makeShots(self,nbshots):
+    def makeShots(self,nbshots:int):
         if self.proba is None: self.measureAll()
         return __class__.makeShotsFromProba(self.proba,nbshots)
     
@@ -40,7 +40,7 @@ class QuantumRegister(AbstractQuantumRegister):
     def sx(self,q:int):
         self._oneQubitGate(SXgate,q)
         
-    def cz(self,q0,q1):
+    def cz(self,q0:int,q1:int):
         self._twoQubitGate(CZ_tensor,q0,q1)
         
     def viewQuantumState(self):
